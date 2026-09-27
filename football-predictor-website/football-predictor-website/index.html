@@ -1,0 +1,1118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BetWise Predictor — Football Match Prediction Website</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(13, 24, 42, 0.86);
+      --panel-2: rgba(16, 32, 55, 0.9);
+      --text: #ecf4ff;
+      --muted: #94a9c5;
+      --line: rgba(148, 169, 197, 0.22);
+      --brand: #48d597;
+      --brand-2: #6aa8ff;
+      --danger: #ff6f84;
+      --warning: #ffcf66;
+      --purple: #a989ff;
+      --shadow: 0 22px 70px rgba(0,0,0,.35);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --max: 1220px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 18% 10%, rgba(72,213,151,.20), transparent 26%),
+        radial-gradient(circle at 82% 0%, rgba(106,168,255,.20), transparent 25%),
+        radial-gradient(circle at 50% 85%, rgba(169,137,255,.14), transparent 33%),
+        linear-gradient(180deg, #06101e 0%, #091322 46%, #060b13 100%);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; }
+    button, input, select, textarea { font: inherit; }
+
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 24px; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 0 26px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: -.04em;
+      font-size: 1.2rem;
+    }
+
+    .logo-mark {
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #06101e;
+      box-shadow: 0 12px 30px rgba(72,213,151,.2);
+      font-weight: 1000;
+    }
+
+    .pill-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+    .pill {
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: .88rem;
+      white-space: nowrap;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(330px, .9fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+
+    .hero-card, .panel {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15, 31, 54, .92), rgba(10, 19, 33, .86));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card { padding: 34px; position: relative; }
+    .hero-card:before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      pointer-events: none;
+      background: radial-gradient(circle at 80% 20%, rgba(72,213,151,.15), transparent 24%);
+    }
+
+    .eyebrow {
+      color: var(--brand);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .76rem;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      line-height: .94;
+      letter-spacing: -.08em;
+      max-width: 780px;
+    }
+
+    .hero p { color: var(--muted); line-height: 1.65; max-width: 780px; font-size: 1rem; }
+    .hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top: 22px; }
+
+    .btn {
+      border: 0;
+      border-radius: 15px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      min-height: 44px;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: rgba(106,168,255,.55); background: rgba(255,255,255,.11); }
+    .btn.primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #04101a; border: 0; }
+    .btn.ghost { background: rgba(255,255,255,.04); }
+    .btn.danger { background: rgba(255,111,132,.12); color:#ffd6de; border-color: rgba(255,111,132,.34); }
+    .btn.small { min-height: 36px; padding: 8px 10px; font-size: .88rem; border-radius: 11px; }
+
+    .score-card { padding: 24px; display:flex; flex-direction:column; gap: 16px; }
+    .score-shell {
+      display:grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 14px;
+      align-items:center;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .team-mini { min-width: 0; }
+    .team-mini strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .team-mini span { display:block; color: var(--muted); font-size: .8rem; margin-top:4px; }
+    .vs {
+      width:42px; height:42px; border-radius:50%; display:grid; place-items:center;
+      background: rgba(72,213,151,.12); color: var(--brand); font-weight:1000; border:1px solid rgba(72,213,151,.25);
+    }
+    .stat-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .mini-stat { border: 1px solid var(--line); background: rgba(255,255,255,.04); border-radius: 16px; padding: 14px; }
+    .mini-stat b { display:block; font-size: 1.2rem; letter-spacing:-.04em; }
+    .mini-stat span { color: var(--muted); font-size:.78rem; }
+
+    .tabs { display:flex; gap: 10px; flex-wrap: wrap; margin: 18px 0 16px; }
+    .tab { border:1px solid var(--line); background:rgba(255,255,255,.04); color: var(--muted); border-radius:999px; padding: 10px 14px; cursor:pointer; font-weight:900; }
+    .tab.active { color:#05111c; background:linear-gradient(135deg,var(--brand),var(--brand-2)); border-color:transparent; }
+
+    .grid-main { display:grid; grid-template-columns: 440px minmax(0, 1fr); gap: 22px; align-items:start; }
+    .panel { padding: 20px; }
+    .panel-title { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 16px; }
+    .panel-title h2, .panel-title h3 { margin:0; letter-spacing:-.04em; }
+    .panel-title h2 { font-size:1.25rem; }
+    .panel-title h3 { font-size:1.05rem; }
+    .hint { color: var(--muted); font-size: .86rem; line-height:1.45; }
+
+    .section { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+    .section:first-of-type { border-top: 0; padding-top: 0; margin-top:0; }
+    .section h3 { margin: 0 0 12px; font-size: .96rem; color:#dbe9ff; letter-spacing:-.02em; }
+
+    .form-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+    .field { display:flex; flex-direction:column; gap: 7px; min-width:0; }
+    label { color: var(--muted); font-size: .81rem; font-weight: 800; }
+    input, select, textarea {
+      width: 100%;
+      color: var(--text);
+      background: rgba(255,255,255,.055);
+      border: 1px solid rgba(148,169,197,.25);
+      border-radius: 13px;
+      min-height: 44px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    input:focus, select:focus, textarea:focus { border-color: rgba(72,213,151,.55); background: rgba(255,255,255,.08); }
+    textarea { min-height: 130px; resize: vertical; line-height: 1.45; }
+    select option { background:#0d182a; }
+    .full { grid-column: 1 / -1; }
+
+    .quick-row { display:flex; gap:8px; flex-wrap:wrap; margin: 10px 0 0; }
+
+    .result-empty {
+      border: 1px dashed rgba(148,169,197,.35);
+      border-radius: 20px;
+      padding: 34px;
+      color: var(--muted);
+      text-align:center;
+      background: rgba(255,255,255,.03);
+    }
+
+    .verdict {
+      border:1px solid rgba(72,213,151,.26);
+      background: linear-gradient(135deg, rgba(72,213,151,.12), rgba(106,168,255,.08));
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .verdict h2 { margin:0 0 8px; letter-spacing:-.04em; }
+    .verdict p { margin:0; color:#cfe0f6; line-height:1.55; }
+
+    .prob-grid { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin: 14px 0; }
+    .prob-card { border:1px solid var(--line); background:rgba(255,255,255,.04); border-radius:18px; padding:14px; overflow:hidden; }
+    .prob-card .top { display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:10px; }
+    .prob-card b { font-size:1.25rem; letter-spacing:-.04em; }
+    .bar { height:8px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden; }
+    .bar > span { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--brand),var(--brand-2)); border-radius:999px; }
+    .prob-card.away .bar > span { background:linear-gradient(90deg,var(--purple),var(--brand-2)); }
+    .prob-card.draw .bar > span { background:linear-gradient(90deg,var(--warning),#ff9f66); }
+
+    .chips { display:flex; gap:8px; flex-wrap:wrap; margin: 10px 0 16px; }
+    .chip { border:1px solid var(--line); background:rgba(255,255,255,.045); border-radius:999px; padding:8px 10px; color:#cfe0f6; font-size:.84rem; }
+    .chip.good { border-color:rgba(72,213,151,.32); color:#c8ffe4; background:rgba(72,213,151,.08); }
+    .chip.warn { border-color:rgba(255,207,102,.32); color:#ffe9b3; background:rgba(255,207,102,.08); }
+    .chip.bad { border-color:rgba(255,111,132,.32); color:#ffd6de; background:rgba(255,111,132,.08); }
+
+    .table-wrap { overflow:auto; border:1px solid var(--line); border-radius:18px; margin: 12px 0 16px; }
+    table { width:100%; border-collapse: collapse; min-width: 720px; }
+    th, td { text-align:left; padding: 12px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color:#b8c9e1; font-size:.78rem; text-transform:uppercase; letter-spacing:.08em; background:rgba(255,255,255,.04); position: sticky; top:0; }
+    td { color:#e9f3ff; font-size:.92rem; }
+    tr:last-child td { border-bottom:0; }
+    .risk { font-weight:900; border-radius:999px; display:inline-flex; padding:5px 8px; font-size:.78rem; }
+    .risk.low { color:#c8ffe4; background:rgba(72,213,151,.12); }
+    .risk.medium-low { color:#d6eaff; background:rgba(106,168,255,.12); }
+    .risk.medium { color:#ffe9b3; background:rgba(255,207,102,.12); }
+    .risk.high { color:#ffd6de; background:rgba(255,111,132,.12); }
+
+    .two-col { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .note-box { border:1px solid var(--line); background:rgba(255,255,255,.04); border-radius:18px; padding:16px; }
+    .note-box h3 { margin:0 0 10px; letter-spacing:-.03em; }
+    .note-box ul, .note-box ol { margin:0; padding-left: 20px; color:#cfe0f6; line-height:1.6; }
+
+    .score-list { display:grid; gap:8px; margin-top:10px; }
+    .score-row { display:flex; justify-content:space-between; align-items:center; gap: 10px; padding:10px 12px; border-radius:14px; background:rgba(255,255,255,.045); border:1px solid var(--line); }
+    .score-row strong { font-size:1.05rem; }
+    .muted { color:var(--muted); }
+
+    .batch-layout { display:grid; grid-template-columns: 420px minmax(0, 1fr); gap:22px; align-items:start; }
+    .csv-help { color:var(--muted); font-size:.82rem; line-height:1.5; }
+    .footer { color:var(--muted); font-size:.84rem; line-height:1.6; text-align:center; padding: 26px 0 10px; }
+    .hidden { display:none !important; }
+
+
+    .auto-panel { margin: 0 0 18px; }
+    .auto-toolbar { display:grid; grid-template-columns: 180px 160px minmax(170px, 1fr) auto auto; gap: 12px; align-items:end; }
+    .source-badge { display:inline-flex; align-items:center; gap:8px; color:#cfe0f6; border:1px solid rgba(72,213,151,.28); background:rgba(72,213,151,.08); border-radius:999px; padding:8px 10px; font-size:.82rem; font-weight:800; }
+    .fixture-list { display:grid; gap: 10px; margin-top: 14px; }
+    .fixture-card { border:1px solid var(--line); background:rgba(255,255,255,.04); border-radius:18px; padding:14px; display:grid; grid-template-columns: minmax(0, 1fr) 180px 110px auto; gap:12px; align-items:center; }
+    .fixture-card:hover { border-color:rgba(106,168,255,.45); background:rgba(255,255,255,.06); }
+    .fixture-title strong { display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; letter-spacing:-.02em; }
+    .fixture-title span, .fixture-meta { color:var(--muted); font-size:.82rem; line-height:1.45; }
+    .pick-tag { border-radius:999px; padding:7px 9px; font-size:.82rem; color:#c8ffe4; border:1px solid rgba(72,213,151,.32); background:rgba(72,213,151,.08); display:inline-flex; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .api-status { margin-top: 10px; color:var(--muted); font-size:.86rem; line-height:1.5; }
+    .api-status.good { color:#c8ffe4; }
+    .api-status.warn { color:#ffe9b3; }
+    .auto-summary { display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+
+    @media (max-width: 980px) {
+      .hero, .grid-main, .batch-layout { grid-template-columns: 1fr; }
+      .grid-main { gap: 16px; }
+      .panel.sticky { position:static; }
+    }
+    @media (max-width: 680px) {
+      .wrap { padding: 16px; }
+      .topbar { align-items:flex-start; flex-direction:column; }
+      .hero-card { padding: 24px; }
+      .form-grid, .prob-grid, .two-col, .stat-grid, .auto-toolbar { grid-template-columns: 1fr; }
+      .fixture-card { grid-template-columns: 1fr; }
+      table { min-width: 620px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="logo" aria-label="BetWise Predictor">
+        <div class="logo-mark">BW</div>
+        <div>
+          BetWise Predictor<br>
+          <span class="hint">Statistical football picks</span>
+        </div>
+      </div>
+      <div class="pill-row">
+        <span class="pill">No scraping required</span>
+        <span class="pill">Manual/API-ready data</span>
+        <span class="pill">1X2 · BTTS · Goals · Scorelines</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Forebet-style engine, your own model</div>
+        <h1>Predict football matches with probabilities, scorelines and risk control.</h1>
+        <p>
+          Enter team form, goals, odds and team-strength data. The website calculates expected goals, 1X2 probabilities,
+          BTTS, totals, likely scores, price gates and a clear betting recommendation.
+        </p>
+        <div class="hero-actions">
+          <button class="btn primary" id="scrollToAnalyzer">Analyze a match</button>
+          <button class="btn ghost" id="loadBalanced">Load balanced demo</button>
+          <button class="btn ghost" id="loadFavourite">Load strong favourite demo</button>
+        </div>
+      </div>
+      <aside class="hero-card score-card">
+        <div class="score-shell">
+          <div class="team-mini"><strong id="heroHome">Home FC</strong><span>Model xG <span id="heroHXG">1.45</span></span></div>
+          <div class="vs">VS</div>
+          <div class="team-mini" style="text-align:right"><strong id="heroAway">Away FC</strong><span>Model xG <span id="heroAXG">1.12</span></span></div>
+        </div>
+        <div class="stat-grid">
+          <div class="mini-stat"><b id="heroMain">Run model</b><span>Main pick</span></div>
+          <div class="mini-stat"><b id="heroScore">--</b><span>Likely score</span></div>
+          <div class="mini-stat"><b id="heroRisk">--</b><span>Risk grade</span></div>
+          <div class="mini-stat"><b id="heroTotal">--</b><span>Avg. goals</span></div>
+        </div>
+      </aside>
+    </section>
+
+
+    <section class="panel auto-panel" id="autoPanel">
+      <div class="panel-title">
+        <div>
+          <h2>Automatic match loading</h2>
+          <div class="hint">Loads fixtures from the built-in website backend, then applies the prediction engine automatically. No team typing needed.</div>
+        </div>
+        <span class="source-badge" id="sourceBadge">Public fixture feed</span>
+      </div>
+      <div class="auto-toolbar">
+        <div class="field">
+          <label for="autoDate">Start date</label>
+          <input id="autoDate" type="date" />
+        </div>
+        <div class="field">
+          <label for="autoDays">Date range</label>
+          <select id="autoDays"><option value="1" selected>1 day</option><option value="3">3 days</option><option value="7">7 days</option></select>
+        </div>
+        <div class="field">
+          <label for="autoLeague">Leagues</label>
+          <select id="autoLeague">
+            <option value="all" selected>All supported leagues</option>
+            <option value="top5">Top 5 Europe</option>
+            <option value="epl-2026">Premier League</option>
+            <option value="la-liga-2026">LaLiga</option>
+            <option value="bundesliga-2026">Bundesliga</option>
+            <option value="serie-a-2026">Serie A</option>
+            <option value="ligue-1-2026">Ligue 1</option>
+            <option value="mls-2026">MLS</option>
+          </select>
+        </div>
+        <button class="btn primary" id="loadAuto">Load matches</button>
+        <button class="btn ghost" id="autoBest10">Best 10 acca</button>
+      </div>
+      <div class="auto-summary" id="autoSummary"></div>
+      <div class="api-status" id="apiStatus">Automatic fixtures will load when the page opens.</div>
+      <div class="fixture-list" id="fixtureList"></div>
+    </section>
+
+    <nav class="tabs" aria-label="Prediction modes">
+      <button class="tab active" data-tab="single">Single Match Analyzer</button>
+      <button class="tab" data-tab="batch">Batch Accumulator Builder</button>
+    </nav>
+
+    <main id="singleTab" class="grid-main">
+      <section class="panel sticky" id="analyzerPanel">
+        <div class="panel-title">
+          <div>
+            <h2>Match data</h2>
+            <div class="hint">Use recent averages. If you do not know a value, keep the default.</div>
+          </div>
+        </div>
+
+        <form id="predictForm">
+          <div class="section">
+            <h3>Fixture</h3>
+            <div class="form-grid">
+              <div class="field"><label for="homeTeam">Home team</label><input id="homeTeam" value="Hungary" /></div>
+              <div class="field"><label for="awayTeam">Away team</label><input id="awayTeam" value="Ukraine" /></div>
+              <div class="field"><label for="competition">Competition</label><input id="competition" value="UEFA Nations League" /></div>
+              <div class="field"><label for="matchDate">Date</label><input id="matchDate" type="date" value="2026-09-25" /></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Market odds, decimal</h3>
+            <div class="form-grid">
+              <div class="field"><label for="homeOdds">Home win odds</label><input id="homeOdds" type="number" step="0.01" value="2.25" /></div>
+              <div class="field"><label for="drawOdds">Draw odds</label><input id="drawOdds" type="number" step="0.01" value="3.25" /></div>
+              <div class="field"><label for="awayOdds">Away win odds</label><input id="awayOdds" type="number" step="0.01" value="3.20" /></div>
+              <div class="field"><label for="homeAdvantage">Home advantage</label><select id="homeAdvantage"><option value="0">Neutral venue</option><option value="0.12">Low</option><option value="0.25" selected>Normal</option><option value="0.38">Strong</option></select></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Recent performance</h3>
+            <div class="form-grid">
+              <div class="field"><label for="homeGF">Home/team goals scored per match</label><input id="homeGF" type="number" step="0.01" value="1.55" /></div>
+              <div class="field"><label for="homeGA">Home/team goals conceded per match</label><input id="homeGA" type="number" step="0.01" value="1.20" /></div>
+              <div class="field"><label for="awayGF">Away/team goals scored per match</label><input id="awayGF" type="number" step="0.01" value="1.48" /></div>
+              <div class="field"><label for="awayGA">Away/team goals conceded per match</label><input id="awayGA" type="number" step="0.01" value="1.35" /></div>
+              <div class="field"><label for="homeForm">Home form, last 5</label><input id="homeForm" value="W-D-W-W-D" /></div>
+              <div class="field"><label for="awayForm">Away form, last 5</label><input id="awayForm" value="W-L-W-D-W" /></div>
+              <div class="field"><label for="homeRank">Home rank/position, 1 = best</label><input id="homeRank" type="number" step="1" value="39" /></div>
+              <div class="field"><label for="awayRank">Away rank/position, 1 = best</label><input id="awayRank" type="number" step="1" value="33" /></div>
+              <div class="field"><label for="leagueSize">Rank scale / league size</label><input id="leagueSize" type="number" step="1" value="100" /></div>
+              <div class="field"><label for="tempo">Game tempo</label><select id="tempo"><option value="0.90">Cagey / tactical</option><option value="1" selected>Normal</option><option value="1.12">Open / transition-heavy</option><option value="1.24">Very open</option></select></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Team news and motivation</h3>
+            <div class="form-grid">
+              <div class="field"><label for="homeAttInj">Home key attacking absences</label><input id="homeAttInj" type="number" min="0" step="1" value="1" /></div>
+              <div class="field"><label for="awayAttInj">Away key attacking absences</label><input id="awayAttInj" type="number" min="0" step="1" value="1" /></div>
+              <div class="field"><label for="homeDefInj">Home key defensive absences</label><input id="homeDefInj" type="number" min="0" step="1" value="0" /></div>
+              <div class="field"><label for="awayDefInj">Away key defensive absences</label><input id="awayDefInj" type="number" min="0" step="1" value="1" /></div>
+              <div class="field"><label for="homeMotivation">Home motivation</label><select id="homeMotivation"><option value="-0.08">Low</option><option value="0" selected>Normal</option><option value="0.08">High</option><option value="0.14">Must-win</option></select></div>
+              <div class="field"><label for="awayMotivation">Away motivation</label><select id="awayMotivation"><option value="-0.08">Low</option><option value="0" selected>Normal</option><option value="0.08">High</option><option value="0.14">Must-win</option></select></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <button type="submit" class="btn primary" style="width:100%">Analyze match</button>
+            <div class="quick-row">
+              <button type="button" class="btn small ghost" data-demo="balanced">Hungary vs Ukraine</button>
+              <button type="button" class="btn small ghost" data-demo="favourite">England U21 vs Kazakhstan U21</button>
+              <button type="button" class="btn small ghost" data-demo="homefav">Girona vs Albacete</button>
+              <button type="button" class="btn small danger" id="resetForm">Reset</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel" id="resultsPanel">
+        <div class="result-empty" id="emptyState">
+          <h2 style="margin-top:0">Your prediction will appear here.</h2>
+          <p>Click <strong>Analyze match</strong> to generate a full betting-style report.</p>
+        </div>
+        <div id="resultContent" class="hidden"></div>
+      </section>
+    </main>
+
+    <main id="batchTab" class="batch-layout hidden">
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <h2>Batch accumulator input</h2>
+            <div class="hint">Paste CSV rows. The engine will rank fixtures and select the best 10 legs.</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="field full">
+            <label for="batchCount">Accumulator size</label>
+            <select id="batchCount"><option>5</option><option>6</option><option>8</option><option selected>10</option></select>
+          </div>
+          <br>
+          <div class="field full">
+            <label for="batchCsv">CSV data</label>
+            <textarea id="batchCsv" spellcheck="false"></textarea>
+          </div>
+          <p class="csv-help">
+            Format: Home,Away,homeGF,homeGA,awayGF,awayGA,homeOdds,drawOdds,awayOdds,homeForm,awayForm,homeRank,awayRank<br>
+            Example: Spain U21,Malta U21,2.3,0.5,0.4,2.1,1.18,6.0,13.0,W-W-W-W-W,L-L-L-L-L,1,42
+          </p>
+          <div class="quick-row">
+            <button class="btn primary" id="runBatch">Build accumulator</button>
+            <button class="btn ghost" id="loadBatchDemo">Load demo slate</button>
+          </div>
+        </div>
+      </section>
+      <section class="panel">
+        <div id="batchOutput" class="result-empty">
+          <h2 style="margin-top:0">No accumulator yet.</h2>
+          <p>Paste fixture rows or load the demo slate, then build the acca.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      This is a statistical decision-support tool, not a guarantee. It is not affiliated with Forebet and does not copy or scrape Forebet data.
+      Always check confirmed lineups, injuries, market movement and bookmaker rules before staking.
+    </footer>
+  </div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const fmtPct = (v) => `${Math.round(v * 100)}%`;
+  const fmt = (v, d = 2) => Number.isFinite(v) ? v.toFixed(d) : "--";
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const safeNum = (id, fallback = 0) => {
+    const v = parseFloat($(id)?.value);
+    return Number.isFinite(v) ? v : fallback;
+  };
+  const escapeHtml = (str) => String(str ?? "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+  const demos = {
+    balanced: {
+      homeTeam: "Hungary", awayTeam: "Ukraine", competition: "UEFA Nations League", matchDate: "2026-09-25",
+      homeOdds: 2.25, drawOdds: 3.25, awayOdds: 3.20, homeAdvantage: "0.25",
+      homeGF: 1.55, homeGA: 1.20, awayGF: 1.48, awayGA: 1.35,
+      homeForm: "W-D-W-W-D", awayForm: "W-L-W-D-W", homeRank: 39, awayRank: 33, leagueSize: 100,
+      tempo: "1", homeAttInj: 1, awayAttInj: 1, homeDefInj: 0, awayDefInj: 1,
+      homeMotivation: "0", awayMotivation: "0"
+    },
+    favourite: {
+      homeTeam: "England U21", awayTeam: "Kazakhstan U21", competition: "Euro U21 Qualification", matchDate: "2026-09-25",
+      homeOdds: 1.05, drawOdds: 13.00, awayOdds: 34.00, homeAdvantage: "0.25",
+      homeGF: 2.85, homeGA: 0.45, awayGF: 0.55, awayGA: 2.35,
+      homeForm: "W-W-W-W-D", awayForm: "L-L-D-L-L", homeRank: 2, awayRank: 42, leagueSize: 55,
+      tempo: "1.12", homeAttInj: 0, awayAttInj: 1, homeDefInj: 0, awayDefInj: 2,
+      homeMotivation: "0.08", awayMotivation: "0"
+    },
+    homefav: {
+      homeTeam: "Girona", awayTeam: "Albacete", competition: "Spanish Cup", matchDate: "2026-09-25",
+      homeOdds: 1.48, drawOdds: 4.20, awayOdds: 6.80, homeAdvantage: "0.25",
+      homeGF: 1.90, homeGA: 1.05, awayGF: 1.05, awayGA: 1.55,
+      homeForm: "W-W-D-W-L", awayForm: "L-D-W-L-D", homeRank: 7, awayRank: 18, leagueSize: 22,
+      tempo: "0.90", homeAttInj: 0, awayAttInj: 1, homeDefInj: 0, awayDefInj: 1,
+      homeMotivation: "0.08", awayMotivation: "0"
+    }
+  };
+
+  const batchDemo = `Portugal U21,Bulgaria U21,2.4,0.4,0.6,2.0,1.18,6.00,13.00,W-W-W-W-W,L-D-L-L-W,1,38
+Spain U21,Finland U21,2.5,0.7,0.9,1.8,1.40,4.50,6.25,W-W-W-W-W,D-L-W-L-D,2,24
+Senegal,Mozambique,1.8,0.5,0.8,1.4,1.33,4.50,8.50,W-D-W-W-W,D-L-W-D-L,1,6
+Haras Al Hodoud,Dairut SC,1.7,0.7,0.4,2.2,1.20,5.00,13.00,W-W-W-D-W,L-L-L-L-L,4,20
+Hammarby TTF,Stocksund,2.1,1.0,0.9,1.9,1.22,5.75,8.50,W-W-D-W-W,L-D-L-W-L,3,13
+Sokol Hostouň,Slavoj Vysehrad,2.4,0.8,0.7,2.0,1.33,4.75,6.50,W-W-W-W-D,L-L-D-L-W,1,13
+Linfield W,Cliftonville W,1.7,1.5,2.7,1.2,2.48,3.60,2.30,D-W-L-W-D,W-W-W-D-W,3,2
+Inverness CT,Greenock Morton,1.6,1.0,1.0,1.4,1.90,3.40,4.20,W-D-W-L-W,D-L-D-W-L,5,8
+Tersana Giza,Baladiyyat Al Mahalla,1.45,0.8,0.7,1.4,2.20,3.00,3.30,W-W-D-L-W,L-D-L-W-L,8,15
+Glenavon,Loughgall FC,1.8,1.0,0.8,1.7,1.50,3.90,5.50,W-D-W-W-L,L-L-D-W-L,4,11
+Türkiye,France,1.35,1.25,1.95,0.85,4.20,3.60,1.82,W-D-W-L-W,W-W-D-W-W,20,3
+Italy,Belgium,1.55,1.05,1.65,1.20,2.20,3.30,3.20,W-W-D-L-W,W-L-W-D-W,8,7`;
+
+  let loadedFixtures = [];
+
+  const fallbackAutoFixtures = batchDemo.split(/\n+/).map(line => {
+    const p = line.split(",").map(x => x.trim());
+    return {
+      id: `demo-${p[0]}-${p[1]}`, source: "demo", league: "Demo slate", dateUtc: "", timeUtc: "", venue: "",
+      homeTeam: p[0], awayTeam: p[1],
+      input: { homeTeam: p[0], awayTeam: p[1], competition: "Demo slate", matchDate: "", homeGF: parseFloat(p[2]), homeGA: parseFloat(p[3]), awayGF: parseFloat(p[4]), awayGA: parseFloat(p[5]), homeOdds: parseFloat(p[6]), drawOdds: parseFloat(p[7]), awayOdds: parseFloat(p[8]), homeForm: p[9], awayForm: p[10], homeRank: parseFloat(p[11]), awayRank: parseFloat(p[12]), leagueSize: Math.max(parseFloat(p[11]), parseFloat(p[12]), 30), homeAdvantage: 0.25, tempo: 1, homeAttInj: 0, awayAttInj: 0, homeDefInj: 0, awayDefInj: 0, homeMotivation: 0, awayMotivation: 0 }
+    };
+  });
+
+  const factorial = (() => {
+    const facts = [1];
+    for (let i = 1; i <= 12; i++) facts[i] = facts[i - 1] * i;
+    return (n) => facts[n] ?? facts[facts.length - 1];
+  })();
+
+  function poisson(k, lambda) {
+    return Math.exp(-lambda) * Math.pow(lambda, k) / factorial(k);
+  }
+
+  function formScore(form) {
+    const chars = String(form || "").toUpperCase().match(/[WDL]/g) || [];
+    if (!chars.length) return { score: 0.5, label: "no form entered", wins: 0, draws: 0, losses: 0, sample: 0 };
+    let points = 0, wins = 0, draws = 0, losses = 0;
+    chars.forEach(c => {
+      if (c === "W") { points += 1; wins++; }
+      if (c === "D") { points += 0.45; draws++; }
+      if (c === "L") { losses++; }
+    });
+    return { score: points / chars.length, label: chars.join("-"), wins, draws, losses, sample: chars.length };
+  }
+
+  function rankStrength(rank, scale) {
+    if (!Number.isFinite(rank) || rank <= 0 || !Number.isFinite(scale) || scale <= 1) return 0.5;
+    return clamp((scale + 1 - rank) / scale, 0.03, 0.99);
+  }
+
+  function impliedOdds(home, draw, away) {
+    if ([home, draw, away].some(v => !Number.isFinite(v) || v <= 1)) return null;
+    const raw = [1 / home, 1 / draw, 1 / away];
+    const total = raw[0] + raw[1] + raw[2];
+    return { home: raw[0] / total, draw: raw[1] / total, away: raw[2] / total, margin: total - 1 };
+  }
+
+  function calcMatrix(hxg, axg, maxGoals = 8) {
+    const matrix = [];
+    let total = 0;
+    for (let h = 0; h <= maxGoals; h++) {
+      matrix[h] = [];
+      for (let a = 0; a <= maxGoals; a++) {
+        const p = poisson(h, hxg) * poisson(a, axg);
+        matrix[h][a] = p;
+        total += p;
+      }
+    }
+    const probs = { home: 0, draw: 0, away: 0, over15: 0, over25: 0, over35: 0, under25: 0, under35: 0, btts: 0, homeGoal: 0, awayGoal: 0 };
+    const scoreRows = [];
+    for (let h = 0; h <= maxGoals; h++) {
+      for (let a = 0; a <= maxGoals; a++) {
+        const p = matrix[h][a] / total;
+        if (h > a) probs.home += p;
+        else if (h === a) probs.draw += p;
+        else probs.away += p;
+        if (h + a > 1.5) probs.over15 += p;
+        if (h + a > 2.5) probs.over25 += p;
+        if (h + a > 3.5) probs.over35 += p;
+        if (h + a < 2.5) probs.under25 += p;
+        if (h + a < 3.5) probs.under35 += p;
+        if (h > 0 && a > 0) probs.btts += p;
+        if (h > 0) probs.homeGoal += p;
+        if (a > 0) probs.awayGoal += p;
+        scoreRows.push({ score: `${h}-${a}`, h, a, p });
+      }
+    }
+    scoreRows.sort((a,b) => b.p - a.p);
+    return { probs, scoreRows: scoreRows.slice(0, 7) };
+  }
+
+  function riskLabel(prob, market) {
+    if (market === "Correct score") return "high";
+    if (prob >= 0.76) return "low";
+    if (prob >= 0.66) return "medium-low";
+    if (prob >= 0.56) return "medium";
+    return "high";
+  }
+
+  function riskText(r) {
+    return r.replace("-", " ").replace(/^./, c => c.toUpperCase());
+  }
+
+  function takePrice(prob) {
+    if (!prob || prob <= 0) return null;
+    const fair = 1 / prob;
+    const premium = prob > 0.74 ? 1.04 : prob > 0.62 ? 1.05 : 1.07;
+    return { fair, take: fair * premium };
+  }
+
+  function marketRow(name, market, prob, reason, riskOverride) {
+    const price = takePrice(prob);
+    const risk = riskOverride || riskLabel(prob, market);
+    return { name, market, prob, fair: price?.fair, take: price?.take, reason, risk };
+  }
+
+  function analyzeData(input) {
+    const home = input.homeTeam || "Home";
+    const away = input.awayTeam || "Away";
+    const hForm = formScore(input.homeForm);
+    const aForm = formScore(input.awayForm);
+    const hRank = rankStrength(input.homeRank, input.leagueSize);
+    const aRank = rankStrength(input.awayRank, input.leagueSize);
+    const formDiff = hForm.score - aForm.score;
+    const rankDiff = hRank - aRank;
+    const motivationDiff = (input.homeMotivation || 0) - (input.awayMotivation || 0);
+    const homeAdv = input.homeAdvantage || 0;
+    const tempo = input.tempo || 1;
+
+    let hxg = (input.homeGF * 0.58) + (input.awayGA * 0.42);
+    let axg = (input.awayGF * 0.58) + (input.homeGA * 0.42);
+
+    hxg += homeAdv;
+    axg -= homeAdv * 0.34;
+    hxg += formDiff * 0.34 + rankDiff * 0.34 + motivationDiff * 0.9;
+    axg -= formDiff * 0.25 + rankDiff * 0.25 + motivationDiff * 0.65;
+
+    hxg -= (input.homeAttInj || 0) * 0.11;
+    axg -= (input.awayAttInj || 0) * 0.11;
+    axg += (input.homeDefInj || 0) * 0.10;
+    hxg += (input.awayDefInj || 0) * 0.10;
+
+    const market = impliedOdds(input.homeOdds, input.drawOdds, input.awayOdds);
+    if (market) {
+      const sideDiff = market.home - market.away;
+      hxg += sideDiff * 0.36;
+      axg -= sideDiff * 0.30;
+      const drawGravity = clamp((market.draw - 0.25) * 0.28, -0.04, 0.06);
+      hxg -= drawGravity;
+      axg -= drawGravity;
+    }
+
+    const totalRaw = hxg + axg;
+    const desiredTotal = clamp(totalRaw * tempo, 0.7, 5.8);
+    const scale = desiredTotal / Math.max(totalRaw, 0.2);
+    hxg = clamp(hxg * scale, 0.15, 4.8);
+    axg = clamp(axg * scale, 0.15, 4.8);
+
+    const ft = calcMatrix(hxg, axg);
+    const ht = calcMatrix(hxg * 0.45, axg * 0.45, 6);
+
+    let pHome = ft.probs.home, pDraw = ft.probs.draw, pAway = ft.probs.away;
+    if (market) {
+      pHome = pHome * 0.74 + market.home * 0.26;
+      pDraw = pDraw * 0.74 + market.draw * 0.26;
+      pAway = pAway * 0.74 + market.away * 0.26;
+      const norm = pHome + pDraw + pAway;
+      pHome /= norm; pDraw /= norm; pAway /= norm;
+    }
+
+    const leader = pHome >= pAway && pHome >= pDraw ? { label: `${home} edge`, side: "1", prob: pHome } :
+                   pAway >= pHome && pAway >= pDraw ? { label: `${away} edge`, side: "2", prob: pAway } :
+                   { label: "Draw pressure", side: "X", prob: pDraw };
+
+    const markets = [];
+    markets.push(marketRow(`${home} win`, "1X2", pHome, `${home} model win probability after form, odds and xG blend.`));
+    markets.push(marketRow(`Draw`, "1X2", pDraw, `Draw probability from score matrix and market resistance.`, pDraw > 0.35 ? "medium" : "high"));
+    markets.push(marketRow(`${away} win`, "1X2", pAway, `${away} model win probability after form, odds and xG blend.`));
+    markets.push(marketRow(`${home} 1X`, "Double chance", pHome + pDraw, `Protection against the draw; useful if ${home} are not clearly dominant.`));
+    markets.push(marketRow(`${away} X2`, "Double chance", pAway + pDraw, `Protection against the draw; useful if ${away} are close or stronger.`));
+    markets.push(marketRow(`12 no draw`, "Double chance", pHome + pAway, `Covers either team winning; poor if the game profile is cagey.`));
+    markets.push(marketRow(`Over 1.5 goals`, "Goals", ft.probs.over15, `Total xG is ${fmt(hxg + axg)}.`));
+    markets.push(marketRow(`Over 2.5 goals`, "Goals", ft.probs.over25, `Open-game probability from Poisson goal matrix.`));
+    markets.push(marketRow(`Under 2.5 goals`, "Goals", ft.probs.under25, `Cagey/low-score probability from Poisson goal matrix.`));
+    markets.push(marketRow(`Under 3.5 goals`, "Goals", ft.probs.under35, `Safer totals angle when the model projects control but not a shootout.`));
+    markets.push(marketRow(`BTTS Yes`, "BTTS", ft.probs.btts, `Both teams to score probability; home goal ${fmtPct(ft.probs.homeGoal)}, away goal ${fmtPct(ft.probs.awayGoal)}.`));
+    markets.push(marketRow(`BTTS No`, "BTTS", 1 - ft.probs.btts, `At least one team blanking in the model.`));
+
+    const sorted = markets.slice().sort((a,b) => {
+      const riskPenalty = { low: 0, "medium-low": .03, medium: .07, high: .14 };
+      const pricePenalty = a.take < 1.16 ? .08 : a.take < 1.25 ? .04 : 0;
+      const pricePenaltyB = b.take < 1.16 ? .08 : b.take < 1.25 ? .04 : 0;
+      return (b.prob - (riskPenalty[b.risk] || 0) - pricePenaltyB) - (a.prob - (riskPenalty[a.risk] || 0) - pricePenalty);
+    });
+
+    const mainCandidates = sorted.filter(m => m.prob >= 0.56 && m.take >= 1.18 && !m.name.includes("Draw") && m.name !== "12 no draw");
+    const main = mainCandidates[0] || sorted[0];
+    const acca = sorted.find(m => m.prob >= 0.70 && m.take >= 1.12 && m.market !== "1X2") || sorted.find(m => m.prob >= 0.70) || main;
+    const value = markets
+      .filter(m => m.prob >= 0.52 && m.prob <= 0.68 && m.take >= 1.45 && !m.name.includes("Draw"))
+      .sort((a,b) => b.take - a.take)[0] || markets.find(m => m.name.includes("BTTS")) || main;
+
+    const danger = [];
+    if (Math.abs(pHome - pAway) < 0.08) danger.push("Side market is close; one transition goal can flip the match.");
+    if (pDraw > 0.29) danger.push("Draw probability is high enough to punish naked 1X2 picks.");
+    if (Math.abs((hxg + axg) - 2.5) < 0.25) danger.push("The total-goals line is near 2.5, so Over/Under 2.5 has extra variance.");
+    if ((input.homeAttInj || 0) + (input.awayAttInj || 0) > 1) danger.push("Attacking absences reduce confidence in overs and BTTS.");
+    if ((input.homeDefInj || 0) + (input.awayDefInj || 0) > 1) danger.push("Defensive absences can break an under even when the base model is controlled.");
+    if (!market) danger.push("No valid 1X2 odds were supplied, so the model cannot compare itself against the market.");
+    if (!danger.length) danger.push("Main risk is normal football variance: red cards, penalties, rotation and early-game state.");
+
+    return {
+      input, home, away, hForm, aForm, hxg, axg, ft, ht,
+      probs: { home: pHome, draw: pDraw, away: pAway, over15: ft.probs.over15, over25: ft.probs.over25, under25: ft.probs.under25, under35: ft.probs.under35, btts: ft.probs.btts },
+      leader, markets, sorted, main, acca, value, danger,
+      likelyScore: ft.scoreRows[0], htScore: ht.scoreRows[0]
+    };
+  }
+
+  function inputFromForm() {
+    return {
+      homeTeam: $("homeTeam").value.trim(), awayTeam: $("awayTeam").value.trim(), competition: $("competition").value.trim(), matchDate: $("matchDate").value,
+      homeOdds: safeNum("homeOdds", NaN), drawOdds: safeNum("drawOdds", NaN), awayOdds: safeNum("awayOdds", NaN), homeAdvantage: safeNum("homeAdvantage", 0.25),
+      homeGF: safeNum("homeGF", 1.4), homeGA: safeNum("homeGA", 1.2), awayGF: safeNum("awayGF", 1.2), awayGA: safeNum("awayGA", 1.3),
+      homeForm: $("homeForm").value, awayForm: $("awayForm").value,
+      homeRank: safeNum("homeRank", NaN), awayRank: safeNum("awayRank", NaN), leagueSize: safeNum("leagueSize", 100),
+      tempo: safeNum("tempo", 1), homeAttInj: safeNum("homeAttInj", 0), awayAttInj: safeNum("awayAttInj", 0), homeDefInj: safeNum("homeDefInj", 0), awayDefInj: safeNum("awayDefInj", 0),
+      homeMotivation: safeNum("homeMotivation", 0), awayMotivation: safeNum("awayMotivation", 0)
+    };
+  }
+
+  function setForm(data) {
+    Object.entries(data).forEach(([k, v]) => { if ($(k)) $(k).value = v; });
+    renderSingle();
+  }
+
+  function renderSingle() {
+    const report = analyzeData(inputFromForm());
+    $("emptyState").classList.add("hidden");
+    const root = $("resultContent");
+    root.classList.remove("hidden");
+    const topOptions = [report.main, report.acca, report.value]
+      .concat(report.sorted.filter(m => ![report.main.name, report.acca.name, report.value.name].includes(m.name)).slice(0, 5));
+
+    const scoreRows = report.ft.scoreRows.slice(0, 5).map(s => `
+      <div class="score-row"><strong>${escapeHtml(s.score)}</strong><span>${fmtPct(s.p)}</span></div>
+    `).join("");
+
+    const optionRows = topOptions.map(m => `
+      <tr>
+        <td><strong>${escapeHtml(m.name)}</strong><br><span class="muted">${escapeHtml(m.market)}</span></td>
+        <td>${fmtPct(m.prob)}</td>
+        <td>${fmt(m.fair)}</td>
+        <td><strong>${fmt(m.take)}+</strong></td>
+        <td><span class="risk ${m.risk}">${riskText(m.risk)}</span></td>
+        <td>${escapeHtml(m.reason)}</td>
+      </tr>
+    `).join("");
+
+    const dangerRows = report.danger.map(x => `<li>${escapeHtml(x)}</li>`).join("");
+    const nextRows = [
+      `Check confirmed lineups and remove the pick if the key attacking/defensive assumption changes.`,
+      `Only take the main pick at ${fmt(report.main.take)}+ decimal odds; below that, the value is gone.`,
+      `If building an acca, prefer ${escapeHtml(report.acca.name)} over exact score markets.`,
+      `Stake smaller when draw probability is above 29% or the total line is close to 2.5.`
+    ].map(x => `<li>${x}</li>`).join("");
+
+    const leadLine = `${report.home} vs ${report.away} leans ${report.leader.label.toLowerCase()}, with projected xG of ${fmt(report.hxg)}-${fmt(report.axg)} and a likely full-time score of ${report.likelyScore.score}. The best betting lane is ${report.main.name} at ${fmt(report.main.take)}+; correct score should stay as a small side punt, not the main bet.`;
+
+    root.innerHTML = `
+      <div class="verdict">
+        <h2>${escapeHtml(report.home)} vs ${escapeHtml(report.away)}</h2>
+        <p>${escapeHtml(leadLine)}</p>
+      </div>
+
+      <div class="chips">
+        <span class="chip good">Main: ${escapeHtml(report.main.name)}</span>
+        <span class="chip">Best acca: ${escapeHtml(report.acca.name)}</span>
+        <span class="chip warn">Value: ${escapeHtml(report.value.name)}</span>
+        <span class="chip">HT score lean: ${escapeHtml(report.htScore.score)}</span>
+      </div>
+
+      <div class="prob-grid">
+        <div class="prob-card"><div class="top"><span>${escapeHtml(report.home)}</span><b>${fmtPct(report.probs.home)}</b></div><div class="bar"><span style="width:${fmtPct(report.probs.home)}"></span></div></div>
+        <div class="prob-card draw"><div class="top"><span>Draw</span><b>${fmtPct(report.probs.draw)}</b></div><div class="bar"><span style="width:${fmtPct(report.probs.draw)}"></span></div></div>
+        <div class="prob-card away"><div class="top"><span>${escapeHtml(report.away)}</span><b>${fmtPct(report.probs.away)}</b></div><div class="bar"><span style="width:${fmtPct(report.probs.away)}"></span></div></div>
+      </div>
+
+      <div class="prob-grid">
+        <div class="prob-card"><div class="top"><span>Over 2.5</span><b>${fmtPct(report.probs.over25)}</b></div><div class="bar"><span style="width:${fmtPct(report.probs.over25)}"></span></div></div>
+        <div class="prob-card"><div class="top"><span>Under 3.5</span><b>${fmtPct(report.probs.under35)}</b></div><div class="bar"><span style="width:${fmtPct(report.probs.under35)}"></span></div></div>
+        <div class="prob-card"><div class="top"><span>BTTS Yes</span><b>${fmtPct(report.probs.btts)}</b></div><div class="bar"><span style="width:${fmtPct(report.probs.btts)}"></span></div></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Option</th><th>Model prob.</th><th>Fair odds</th><th>Take price</th><th>Risk</th><th>Why</th></tr></thead>
+          <tbody>${optionRows}</tbody>
+        </table>
+      </div>
+
+      <div class="two-col">
+        <div class="note-box">
+          <h3>Likely scorelines</h3>
+          <div class="score-list">${scoreRows}</div>
+          <p class="hint">Half-time lean: <strong>${escapeHtml(report.htScore.score)}</strong>. Total xG: <strong>${fmt(report.hxg + report.axg)}</strong>.</p>
+        </div>
+        <div class="note-box">
+          <h3>What could go wrong</h3>
+          <ul>${dangerRows}</ul>
+        </div>
+      </div>
+
+      <div class="note-box" style="margin-top:14px">
+        <h3>Next actions</h3>
+        <ol>${nextRows}</ol>
+      </div>
+    `;
+
+    updateHero(report);
+  }
+
+  function updateHero(report) {
+    $("heroHome").textContent = report.home;
+    $("heroAway").textContent = report.away;
+    $("heroHXG").textContent = fmt(report.hxg);
+    $("heroAXG").textContent = fmt(report.axg);
+    $("heroMain").textContent = report.main.name.length > 16 ? report.main.name.slice(0, 16) + "…" : report.main.name;
+    $("heroScore").textContent = report.likelyScore.score;
+    $("heroRisk").textContent = riskText(report.main.risk);
+    $("heroTotal").textContent = fmt(report.hxg + report.axg);
+  }
+
+  function readBatchRows() {
+    const raw = $("batchCsv").value.trim();
+    if (!raw) return [];
+    return raw.split(/\n+/).map(line => line.trim()).filter(Boolean).map(line => {
+      const parts = line.split(",").map(x => x.trim());
+      const [homeTeam, awayTeam, homeGF, homeGA, awayGF, awayGA, homeOdds, drawOdds, awayOdds, homeForm, awayForm, homeRank, awayRank] = parts;
+      return {
+        homeTeam, awayTeam, competition: "Batch fixture", matchDate: "",
+        homeGF: parseFloat(homeGF), homeGA: parseFloat(homeGA), awayGF: parseFloat(awayGF), awayGA: parseFloat(awayGA),
+        homeOdds: parseFloat(homeOdds), drawOdds: parseFloat(drawOdds), awayOdds: parseFloat(awayOdds),
+        homeForm, awayForm, homeRank: parseFloat(homeRank), awayRank: parseFloat(awayRank), leagueSize: Math.max(parseFloat(homeRank || 0), parseFloat(awayRank || 0), 30),
+        homeAdvantage: 0.25, tempo: 1, homeAttInj: 0, awayAttInj: 0, homeDefInj: 0, awayDefInj: 0,
+        homeMotivation: 0, awayMotivation: 0
+      };
+    }).filter(r => r.homeTeam && r.awayTeam && Number.isFinite(r.homeGF) && Number.isFinite(r.awayGF));
+  }
+
+  function buildBatch() {
+    const rows = readBatchRows();
+    const out = $("batchOutput");
+    if (!rows.length) {
+      out.className = "result-empty";
+      out.innerHTML = `<h2 style="margin-top:0">No valid CSV rows.</h2><p>Load the demo slate or paste rows in the requested format.</p>`;
+      return;
+    }
+    const count = parseInt($("batchCount").value, 10) || 10;
+    const analyses = rows.map(r => {
+      const report = analyzeData(r);
+      const candidates = report.sorted.filter(m => m.prob >= 0.62 && !m.name.includes("Draw") && m.name !== "12 no draw");
+      const pick = candidates[0] || report.main;
+      const score = pick.prob - ({ low: 0, "medium-low": .03, medium: .08, high: .16 }[pick.risk] || 0) + (pick.take >= 1.25 ? .015 : 0);
+      return { report, pick, score };
+    }).sort((a,b) => b.score - a.score).slice(0, count);
+
+    const combinedFair = analyses.reduce((acc, x) => acc * (x.pick.take || 1), 1);
+    const rowsHtml = analyses.map((x, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${escapeHtml(x.report.home)} vs ${escapeHtml(x.report.away)}</strong><br><span class="muted">Likely score: ${escapeHtml(x.report.likelyScore.score)}</span></td>
+        <td>${escapeHtml(x.pick.name)}<br><span class="muted">${escapeHtml(x.pick.market)}</span></td>
+        <td>${fmtPct(x.pick.prob)}</td>
+        <td>${fmt(x.pick.take)}+</td>
+        <td><span class="risk ${x.pick.risk}">${riskText(x.pick.risk)}</span></td>
+      </tr>
+    `).join("");
+
+    out.className = "";
+    out.innerHTML = `
+      <div class="verdict">
+        <h2>Best ${analyses.length}-leg accumulator</h2>
+        <p>Estimated take-price product is around ${fmt(combinedFair)}. Keep the stake small: one lineup shock or red card can break a long slip.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Match</th><th>Pick</th><th>Prob.</th><th>Take price</th><th>Risk</th></tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
+      <div class="note-box">
+        <h3>Acca rules</h3>
+        <ul>
+          <li>Do not include legs whose price has collapsed below the take-price.</li>
+          <li>Remove youth/women/lower-division matches if team news is missing and you need a safer slip.</li>
+          <li>For serious staking, split into smaller 4–6 leg slips instead of forcing all ${analyses.length} together.</li>
+        </ul>
+      </div>
+    `;
+  }
+
+
+  function localTodayIso() {
+    const d = new Date();
+    const off = d.getTimezoneOffset();
+    const local = new Date(d.getTime() - off * 60000);
+    return local.toISOString().slice(0, 10);
+  }
+
+  function setStatus(text, mode = "") {
+    const el = $("apiStatus");
+    el.textContent = text;
+    el.className = `api-status ${mode}`.trim();
+  }
+
+  function normalizeAutoInput(fixture) {
+    const i = fixture.input || {};
+    return {
+      homeTeam: i.homeTeam || fixture.homeTeam || "Home",
+      awayTeam: i.awayTeam || fixture.awayTeam || "Away",
+      competition: i.competition || fixture.league || "Auto fixture",
+      matchDate: i.matchDate || (fixture.dateUtc || "").slice(0, 10),
+      homeOdds: Number.isFinite(+i.homeOdds) ? +i.homeOdds : 2.20,
+      drawOdds: Number.isFinite(+i.drawOdds) ? +i.drawOdds : 3.25,
+      awayOdds: Number.isFinite(+i.awayOdds) ? +i.awayOdds : 3.10,
+      homeAdvantage: Number.isFinite(+i.homeAdvantage) ? +i.homeAdvantage : 0.25,
+      homeGF: Number.isFinite(+i.homeGF) ? +i.homeGF : 1.35,
+      homeGA: Number.isFinite(+i.homeGA) ? +i.homeGA : 1.25,
+      awayGF: Number.isFinite(+i.awayGF) ? +i.awayGF : 1.15,
+      awayGA: Number.isFinite(+i.awayGA) ? +i.awayGA : 1.35,
+      homeForm: i.homeForm || "D-D-D-D-D",
+      awayForm: i.awayForm || "D-D-D-D-D",
+      homeRank: Number.isFinite(+i.homeRank) ? +i.homeRank : 10,
+      awayRank: Number.isFinite(+i.awayRank) ? +i.awayRank : 10,
+      leagueSize: Number.isFinite(+i.leagueSize) ? +i.leagueSize : 20,
+      tempo: Number.isFinite(+i.tempo) ? +i.tempo : 1,
+      homeAttInj: 0, awayAttInj: 0, homeDefInj: 0, awayDefInj: 0,
+      homeMotivation: 0, awayMotivation: 0
+    };
+  }
+
+  function renderLoadedFixtures(fixtures, meta = {}) {
+    loadedFixtures = fixtures.map(f => ({ ...f, input: normalizeAutoInput(f) }));
+    const list = $("fixtureList");
+    const summary = $("autoSummary");
+    if (!loadedFixtures.length) {
+      list.innerHTML = `<div class="result-empty"><h2 style="margin-top:0">No fixtures found.</h2><p>Try a 3-day or 7-day range, or use the demo slate fallback.</p></div>`;
+      summary.innerHTML = "";
+      return;
+    }
+
+    const reports = loadedFixtures.map((fixture, index) => ({ fixture, index, report: analyzeData(fixture.input) }));
+    const leagueCount = new Set(loadedFixtures.map(f => f.league || "Unknown")).size;
+    summary.innerHTML = `
+      <span class="chip good">${loadedFixtures.length} matches loaded</span>
+      <span class="chip">${leagueCount} league${leagueCount === 1 ? "" : "s"}</span>
+      <span class="chip warn">Source: ${escapeHtml(meta.source || loadedFixtures[0].source || "fixture feed")}</span>
+    `;
+
+    list.innerHTML = reports.map(({ fixture, index, report }) => {
+      const dateTxt = fixture.dateUtc ? new Date(fixture.dateUtc.replace(" ", "T")).toLocaleString([], { month: "short", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "Demo time";
+      return `
+        <article class="fixture-card">
+          <div class="fixture-title">
+            <strong>${escapeHtml(fixture.homeTeam)} vs ${escapeHtml(fixture.awayTeam)}</strong>
+            <span>${escapeHtml(fixture.league || "Auto fixture")} · ${escapeHtml(dateTxt)}${fixture.venue ? ` · ${escapeHtml(fixture.venue)}` : ""}</span>
+          </div>
+          <div><span class="pick-tag">${escapeHtml(report.main.name)}</span></div>
+          <div class="fixture-meta">${fmtPct(report.main.prob)} · ${riskText(report.main.risk)}<br>Score ${escapeHtml(report.likelyScore.score)}</div>
+          <button class="btn small primary" data-auto-index="${index}">Analyze</button>
+        </article>
+      `;
+    }).join("");
+
+    document.querySelectorAll("[data-auto-index]").forEach(btn => btn.addEventListener("click", () => {
+      const fixture = loadedFixtures[parseInt(btn.dataset.autoIndex, 10)];
+      if (!fixture) return;
+      setForm(fixture.input);
+      document.querySelector('[data-tab="single"]').click();
+      $("resultsPanel").scrollIntoView({ behavior: "smooth" });
+    }));
+  }
+
+  async function loadAutoFixtures() {
+    const date = $("autoDate").value || localTodayIso();
+    const days = $("autoDays").value || "1";
+    const league = $("autoLeague").value || "all";
+    setStatus(`Loading automatic fixtures for ${date}...`);
+    $("fixtureList").innerHTML = `<div class="result-empty"><h2 style="margin-top:0">Loading...</h2><p>Fetching fixtures and building stats from previous results.</p></div>`;
+    try {
+      const res = await fetch(`/api/fixtures?date=${encodeURIComponent(date)}&days=${encodeURIComponent(days)}&league=${encodeURIComponent(league)}`);
+      if (!res.ok) throw new Error(`API returned ${res.status}`);
+      const data = await res.json();
+      if (!data.fixtures || !data.fixtures.length) {
+        setStatus(`No public fixtures found for ${date}; showing demo slate instead.`, "warn");
+        renderLoadedFixtures(fallbackAutoFixtures, { source: "demo fallback" });
+        return;
+      }
+      setStatus(`Loaded ${data.fixtures.length} fixtures from ${data.source}.`, "good");
+      $("sourceBadge").textContent = data.source || "Public fixture feed";
+      renderLoadedFixtures(data.fixtures, data);
+    } catch (err) {
+      setStatus(`Automatic feed is not reachable in this preview, so I loaded a demo slate. Run through the live website server for real fixtures.`, "warn");
+      renderLoadedFixtures(fallbackAutoFixtures, { source: "demo fallback" });
+    }
+  }
+
+  function buildAutoBest10() {
+    if (!loadedFixtures.length) {
+      renderLoadedFixtures(fallbackAutoFixtures, { source: "demo fallback" });
+    }
+    const rows = loadedFixtures.map(f => normalizeAutoInput(f));
+    const analyses = rows.map(r => {
+      const report = analyzeData(r);
+      const candidates = report.sorted.filter(m => m.prob >= 0.62 && !m.name.includes("Draw") && m.name !== "12 no draw");
+      const pick = candidates[0] || report.main;
+      const score = pick.prob - ({ low: 0, "medium-low": .03, medium: .08, high: .16 }[pick.risk] || 0) + (pick.take >= 1.25 ? .015 : 0);
+      return { report, pick, score };
+    }).sort((a,b) => b.score - a.score).slice(0, 10);
+    const combined = analyses.reduce((acc, x) => acc * (x.pick.take || 1), 1);
+    const rowsHtml = analyses.map((x, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td><strong>${escapeHtml(x.report.home)} vs ${escapeHtml(x.report.away)}</strong><br><span class="muted">Likely ${escapeHtml(x.report.likelyScore.score)}</span></td>
+        <td>${escapeHtml(x.pick.name)}<br><span class="muted">${escapeHtml(x.pick.market)}</span></td>
+        <td>${fmtPct(x.pick.prob)}</td>
+        <td>${fmt(x.pick.take)}+</td>
+        <td><span class="risk ${x.pick.risk}">${riskText(x.pick.risk)}</span></td>
+      </tr>
+    `).join("");
+    $("fixtureList").innerHTML = `
+      <div class="verdict"><h2>Best 10 from loaded automatic matches</h2><p>Estimated take-price product: ${fmt(combined)}. If you want safer betting, split this into two 5-leg slips.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>#</th><th>Match</th><th>Pick</th><th>Prob.</th><th>Take price</th><th>Risk</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>
+      <div class="quick-row"><button class="btn ghost" id="backToFixtures">Back to fixture list</button></div>
+    `;
+    $("backToFixtures").addEventListener("click", () => renderLoadedFixtures(loadedFixtures, { source: $("sourceBadge").textContent }));
+  }
+
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = btn.dataset.tab;
+      $("singleTab").classList.toggle("hidden", tab !== "single");
+      $("batchTab").classList.toggle("hidden", tab !== "batch");
+    });
+  });
+
+  $("predictForm").addEventListener("submit", (e) => { e.preventDefault(); renderSingle(); });
+  document.querySelectorAll("[data-demo]").forEach(btn => btn.addEventListener("click", () => setForm(demos[btn.dataset.demo])));
+  $("loadBalanced").addEventListener("click", () => { setForm(demos.balanced); $("analyzerPanel").scrollIntoView({ behavior: "smooth" }); });
+  $("loadFavourite").addEventListener("click", () => { setForm(demos.favourite); $("analyzerPanel").scrollIntoView({ behavior: "smooth" }); });
+  $("scrollToAnalyzer").addEventListener("click", () => $("analyzerPanel").scrollIntoView({ behavior: "smooth" }));
+  $("resetForm").addEventListener("click", () => setForm(demos.balanced));
+  $("loadBatchDemo").addEventListener("click", () => { $("batchCsv").value = batchDemo; buildBatch(); });
+  $("runBatch").addEventListener("click", buildBatch);
+  $("loadAuto").addEventListener("click", loadAutoFixtures);
+  $("autoBest10").addEventListener("click", buildAutoBest10);
+  $("autoDate").value = localTodayIso();
+
+  // Initial render makes the page feel complete on first load.
+  renderSingle();
+  loadAutoFixtures();
+})();
+</script>
+</body>
+</html>
